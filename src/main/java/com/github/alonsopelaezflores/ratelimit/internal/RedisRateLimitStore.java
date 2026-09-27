@@ -4,6 +4,7 @@ import com.github.alonsopelaezflores.ratelimit.store.RateLimitStore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.exceptions.JedisNoScriptException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -16,11 +17,12 @@ import java.util.stream.Collectors;
 
 public class RedisRateLimitStore implements RateLimitStore {
     private final JedisPool jedisPool;
-    private final String scriptSha;
+    private final String script;
+    private volatile String scriptSha;
 
     public RedisRateLimitStore(String host, int port) {
         this.jedisPool = new JedisPool(new JedisPoolConfig(),host,port);
-        String script = loadScript();
+        this.script = loadScript();
         try(Jedis jedis = jedisPool.getResource()) {
             this.scriptSha = jedis.scriptLoad(script);
         }
@@ -43,15 +45,25 @@ public class RedisRateLimitStore implements RateLimitStore {
     @Override
     public boolean tryConsume(String key, int capacity, int refillTokens, long refillPeriodMillis) {
         try(Jedis jedis = jedisPool.getResource()){
-            List<String> keys = Collections.singletonList(key);
+            List<String> keys = Collections.singletonList(RateLimitConstants.REDIS_KEY_PREFIX + key);
             List<String> args = List.of(
                     String.valueOf(capacity),
                     String.valueOf(refillTokens),
-                    String.valueOf(refillPeriodMillis),
-                    String.valueOf(System.currentTimeMillis())
+                    String.valueOf(refillPeriodMillis)
             );
-            Object result = jedis.evalsha(scriptSha,keys,args);
+            Object result;
+            try {
+                result = jedis.evalsha(scriptSha,keys,args);
+            } catch (JedisNoScriptException e) {
+                scriptSha = jedis.scriptLoad(script);
+                result = jedis.evalsha(scriptSha,keys,args);
+            }
             return ((Long) result) ==1L;
         }
+    }
+
+    @Override
+    public void close() {
+        jedisPool.close();
     }
 }

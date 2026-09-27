@@ -2,7 +2,8 @@ local key = KEYS[1]
 local capacity = tonumber(ARGV[1])
 local refillTokens = tonumber(ARGV[2])
 local refillPeriodMillis = tonumber(ARGV[3])
-local now = tonumber(ARGV[4])
+local time = redis.call("TIME")
+local now = tonumber(time[1]) * 1000 + math.floor(tonumber(time[2]) / 1000)
 
 local bucket = redis.call("HMGET", key, "tokens", "lastRefill")
 local tokens = tonumber(bucket[1])
