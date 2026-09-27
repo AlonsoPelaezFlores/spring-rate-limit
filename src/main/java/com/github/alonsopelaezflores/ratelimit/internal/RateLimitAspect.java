@@ -5,10 +5,8 @@ import com.github.alonsopelaezflores.ratelimit.RateLimitExceededException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
 
 @Aspect
-@Component
 public class RateLimitAspect {
     private final RateLimitService rateLimitService;
     private final RateLimitConfigRegistry rateLimitConfigRegistry;
@@ -46,6 +44,6 @@ public class RateLimitAspect {
         if (arg == null) {
             throw new IllegalArgumentException("The parameter used as key (index " + index + ") is null");
         }
-        return String.valueOf(arg);
+        return rateLimit.name() + ":" + arg;
     }
 }

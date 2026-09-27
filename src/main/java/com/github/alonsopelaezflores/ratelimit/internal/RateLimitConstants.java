@@ -14,6 +14,7 @@ public final class RateLimitConstants {
     public static final String REDIS_PORT_KEY = "store.redis.port";
     public static final String DEFAULT_REDIS_HOST = "localhost";
     public static final int DEFAULT_REDIS_PORT = 6379;
+    public static final String REDIS_KEY_PREFIX = "ratelimit:";
 
     public static final String LUA_SCRIPT_PATH = "rate_limit.lua";
 }
