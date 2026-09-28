@@ -85,7 +85,7 @@ Example: `capacity=10`, `refillTokens=10`, `refillPeriodMillis=1000` means burst
 | Technology | Version | Role |
 |---|---|---|
 | Java | 17+ | Language (required by Spring Framework 7) |
-| Maven | 3.x | Build and dependency management |
+| Maven | 3.6.3+ | Build and dependency management |
 | Spring Framework (`spring-context`) | 7.0.5 | IoC container and `@Configuration` / `@Bean` wiring |
 | Spring AOP (`spring-aop`) | 7.0.5 | Proxy-based interception of annotated methods |
 | AspectJ (`aspectjweaver`) | 1.9.25.1 | `@Aspect` / `@Around` annotations and pointcut expressions |
@@ -129,13 +129,13 @@ src/main/resources
 ## Prerequisites
 
 - **JDK 17** or newer
-- **Maven 3.x**
+- **Maven 3.6.3+**
 - A Spring application (Spring Framework 7 / Spring Boot 4)
 - **Docker**, only if you want the Redis backend. Install it from the [official Docker docs](https://docs.docker.com/get-started/get-docker/) (Docker Desktop on Windows and macOS, Docker Engine on Linux).
 
 ## Installation
 
-The library is not published to Maven Central yet. Install it into your local Maven repository:
+Install it into your local Maven repository:
 
 ```bash
 
